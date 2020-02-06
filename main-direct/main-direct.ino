@@ -24,6 +24,20 @@ const int wavebutton = 28;
 const int resetbutton = 29;
 const int switcheroo = 7;
 
+const int pinkieF = A15; 
+const int ringF = A14;
+const int middleF = A13;
+const int indexF = A12;
+int pinkiepos;
+int indexpos;
+int ringpos;
+int middlepos;
+int pinkieValue;
+int indexValue;
+int ringValue;
+int middleValue;
+int thumbValue;
+
 void setup()
 {
   Serial.begin(9600);
@@ -58,61 +72,13 @@ void loop() {
   
 }
 
-void btnLoop() {
-  if (digitalRead(switcheroo) == LOW) {
-    Serial.println("Button Loop");
-    if (digitalRead(palmbutton) == LOW) {
-      peace();
-      delay(2000);
-    } else if (digitalRead(fistbutton) == LOW) {
-      fist();
-      delay(2000);
-    } else if (digitalRead(wakkabutton) == LOW) {
-      wakka();
-      delay(2000);
-    } else if (digitalRead(ilubutton) == LOW) {
-      iLu();
-      delay(2000);
-    } else if (digitalRead(countbutton) == LOW) {
-      count();
-    } else if (digitalRead(rpsbutton) == LOW) {
-      rPs();
-    } else if (digitalRead(wavebutton) == LOW) {
-      wave();
-  //  } else if (digitalRead(resetbutton) == LOW) {
-  //    presentation();
-    } else {
-      zero();
-    }
-  } else {
-      Serial.println("checking");
-      if (radio.available()){
-        while (radio.available()) {
-          radio.read(value, sizeof(value));
-          int thumbValue = value[1];
-          int indexValue = value[1];
-          int middleValue = value[3];
-          int ringValue = value[2];
-          int pinkieValue = value[0];
-
-          Serial.println((String) thumbValue + " " + (String) middleValue
-            + " " + (String) ringValue + " " + String(pinkieValue));
-
-          // obscene gesture prevention Algorithm (patent pending) (TM) (SM) (R) (C) 2019
-          if (middleValue < 50 && (thumbValue > 80) && (indexValue > 80) 
-            && (ringValue > 80) && (pinkieValue > 80))
-          {
-            middleValue = 150;
-          }
-          
-          pinkieS.write(pinkieValue);
-          indexS.write(indexValue);
-          ringS.write(ringValue);
-          middleS.write(middleValue);
-          thumbS.write(thumbValue);
-      }
-    }
-  }
+void zero()
+{
+  pinkieS.write(20);
+  indexS.write(20);
+  ringS.write(20);
+  middleS.write(20);
+  thumbS.write(20);
 }
 
 void presentation() {
@@ -218,14 +184,6 @@ void peace(){
   thumbS.write(160);
 }
 
-void zero()
-{
-  pinkieS.write(20);
-  indexS.write(20);
-  ringS.write(20);
-  middleS.write(20);
-  thumbS.write(20);
-}
 
 void wakka()
 {
@@ -314,4 +272,51 @@ void scissors()
   pinkieS.write(140);
   ringS.write(150);
   thumbS.write(145);
+}
+
+void btnLoop() {
+  if (digitalRead(switcheroo) == LOW) {
+    Serial.println("Button Loop");
+    if (digitalRead(palmbutton) == LOW) {
+      peace();
+      delay(2000);
+    } else if (digitalRead(fistbutton) == LOW) {
+      Serial.println("fist");
+      fist();
+      delay(2000);
+    } else if (digitalRead(wakkabutton) == LOW) {
+      wakka();
+      delay(2000);
+    } else if (digitalRead(ilubutton) == LOW) {
+      iLu();
+      delay(2000);
+    } else if (digitalRead(countbutton) == LOW) {
+      count();
+    } else if (digitalRead(rpsbutton) == LOW) {
+      rPs();
+    } else if (digitalRead(wavebutton) == LOW) {
+      wave();
+  //  } else if (digitalRead(resetbutton) == LOW) {
+  //    presentation();
+    } else {
+      zero();
+    }
+  } else {
+      pinkieValue = analogRead(pinkieF); 
+      pinkiepos = map(pinkieValue, 850, 940, 0, 180);
+      indexValue = analogRead(indexF);
+      indexpos = map(indexValue, 690, 900, 0, 180);
+      ringValue = analogRead(ringF);
+      ringpos = map(ringValue, 690, 900, 0, 180);
+      middleValue = analogRead(middleF);
+      middlepos = map(middleValue, 700, 900, 0, 180);
+      thumbValue = indexValue;
+      Serial.print((String) indexValue + "\t" + (String) middleValue + "\t"
+        + (String) ringValue + "\t" + (String) pinkieValue + "\n");
+      pinkieS.write(pinkieValue);
+      indexS.write(indexValue);
+      ringS.write(ringValue);
+      middleS.write(middleValue);
+      thumbS.write(thumbValue);
+  }
 }

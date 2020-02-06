@@ -39,8 +39,8 @@ void loop(void){
   ringpos = map(ringValue, 690, 900, 0, 180);
   middleValue = analogRead(middleF);
   middlepos = map(middleValue, 700, 900, 0, 180);
-  Serial.print((String) pinkieValue + "\t" + (String) indexValue + "\t"
-    + (String) ringValue + "\t" + (String) middleValue + "\n");
+  Serial.print((String) indexValue + "\t" + (String) middleValue + "\t"
+    + (String) ringValue + "\t" + (String) pinkieValue + "\n");
   
   value[0] = pinkiepos;
   value[1] = indexpos;
